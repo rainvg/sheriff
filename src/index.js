@@ -5,8 +5,6 @@ function __command__(pid)
 {
   'use strict';
 
-  pid = pid || process.pid.toString();
-
   return new Promise(function(resolve)
   {
     ps.lookup({pid: pid}, function(error, procs)
@@ -27,7 +25,7 @@ function __command__(pid)
 function __lockable__(path)
 {
   'use strict';
-  
+
   return new Promise(function(resolve)
   {
     fs.readFile(path, function(error, pid)
@@ -36,11 +34,12 @@ function __lockable__(path)
         resolve(true);
       else
       {
-        __command__().then(function(local)
+        pid = pid.toString();
+        __command__(process.pid.toString()).then(function(self)
         {
-          __command__(pid).then(function(remote)
+          __command__(pid).then(function(saved)
           {
-            if(local === remote)
+            if(self === saved)
               resolve(false);
             else
               resolve(true);
@@ -75,6 +74,27 @@ function lock(path)
   });
 }
 
+function unlock(path)
+{
+  return new Promise(function(resolve, reject)
+  {
+    fs.readFile(path, function(error, pid)
+    {
+      if(error || pid.toString() !== process.pid.toString())
+        reject();
+      else
+        fs.writeFile(path, '', function(error)
+        {
+          if(error)
+            reject();
+          else
+            resolve();
+        });
+    });
+  });
+}
+
 module.exports = {
-  lock: lock
+  lock: lock,
+  unlock: unlock
 };

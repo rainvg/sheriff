@@ -1,5 +1,5 @@
 var fs = require('fs');
-var ps = require('ps-node');
+var ps = require('ps-nodejs');
 
 function __command__(pid)
 {

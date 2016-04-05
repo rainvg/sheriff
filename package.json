@@ -36,6 +36,6 @@
     "mocha": "^2.3.4"
   },
   "dependencies": {
-    "ps-node": "0.0.5"
+    "ps-nodejs": "0.0.7"
   }
 }
